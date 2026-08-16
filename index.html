@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>本机字体 · Font Gallery</title>
+<style>
+:root{
+  --bg:#f4f2ec;
+  --card:#ffffff;
+  --ink:#211e18;
+  --mut:#8b8578;
+  --line:#e7e3d8;
+  --acc:#b45309;
+  --fs:32px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  line-height:1.5}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none;padding:0}
+
+/* ---------- top bar ---------- */
+header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.9);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)}
+.top-inner{max-width:1500px;margin:0 auto;padding:14px 20px 0}
+.head-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:26px;margin:0;letter-spacing:.5px}
+h1 .dot{color:var(--acc)}
+.sub{font-size:13px;color:var(--mut)}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 0 10px}
+.ctrl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);white-space:nowrap}
+.ctrl.grow{flex:1;min-width:260px}
+.ctrl.grow .text-input{width:100%;min-width:0}
+input[type=search],.text-input{
+  border:1px solid var(--line);border-radius:9px;padding:7px 11px;
+  background:#fbfaf6;min-width:220px;outline:none}
+input[type=search]:focus,.text-input:focus{border-color:var(--acc);background:#fff}
+input[type=range]{accent-color:var(--acc)}
+.size-val{min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fbfaf6}
+.seg button{padding:7px 12px;font-size:13px;border-right:1px solid var(--line);color:var(--mut)}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--ink);color:#fff}
+#italicBtn{font-style:italic;font-family:Georgia,serif;min-width:38px}
+.zh-chip{margin-left:auto}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:12px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13px;
+  background:#fff;color:var(--mut)}
+.chip:hover{border-color:var(--acc);color:var(--acc)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip .n{opacity:.55;margin-left:4px;font-size:11px}
+
+/* ---------- grid ---------- */
+main{max-width:1500px;margin:0 auto;padding:20px}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:box-shadow .18s ease,transform .18s ease;
+  content-visibility:auto;contain-intrinsic-size:238px}
+.card:hover,.card:focus-visible{box-shadow:0 10px 28px rgba(33,30,24,.1);transform:translateY(-2px)}
+.card:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.card.hide{display:none}
+.preview{padding:20px 18px 16px;min-height:150px;display:flex;align-items:center;justify-content:center}
+.sample{max-width:100%;text-align:center;overflow:hidden}
+.sample .row{line-height:1.3;word-break:break-word;overflow-wrap:anywhere}
+.sample .row + .row{margin-top:6px}
+.sample .row.empty{display:none}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:9px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--mut)}
+.meta .names{display:flex;flex-direction:column;min-width:0;gap:2px}
+.meta .name{font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta .en{font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta .en:empty{display:none}
+.meta .tags{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.tag{border:1px solid var(--line);border-radius:6px;padding:2px 7px;background:#faf8f2;
+  color:var(--mut);font-size:11px}
+.tag.file{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#empty{display:none;text-align:center;padding:70px 20px;color:var(--mut)}
+#empty.show{display:block}
+#empty .big{font-size:40px;margin-bottom:8px}
+footer{max-width:1500px;margin:0 auto;padding:26px 20px 44px;color:var(--mut);font-size:12.5px;
+  border-top:1px solid var(--line)}
+
+/* ---------- modal ---------- */
+#modal{position:fixed;inset:0;z-index:100;display:none}
+#modal.show{display:flex;align-items:center;justify-content:center;padding:24px}
+.backdrop{position:absolute;inset:0;background:rgba(33,30,24,.45);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.panel{position:relative;background:#fff;border-radius:18px;max-width:860px;width:100%;
+  padding:30px 34px 24px;box-shadow:0 24px 80px rgba(0,0,0,.28);max-height:86vh;overflow:auto}
+#mClose{position:absolute;top:14px;right:16px;font-size:24px;color:var(--mut);
+  width:38px;height:38px;border-radius:50%;line-height:1}
+#mClose:hover{background:#f2efe7;color:var(--ink)}
+#mName{font-size:30px;font-weight:700;margin:0 44px 0 0;word-break:break-word}
+#mName small{font-size:13px;color:var(--mut);font-weight:400;margin-left:10px}
+#mSample{margin-top:22px;font-size:44px;line-height:1.35;min-height:120px;
+  word-break:break-word}
+#mSample .row + .row{margin-top:12px}
+#mSample .row.empty{display:none}
+#mMeta{margin-top:20px;font-size:13px;color:var(--mut);border-top:1px solid var(--line);padding-top:14px}
+#mMeta b{color:var(--ink);font-weight:600}
+
+@media (max-width:640px){
+  #grid{grid-template-columns:1fr}
+  h1{font-size:22px}
+  .zh-chip{margin-left:0}
+  .panel{padding:24px 18px 18px}
+  #mSample{font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top-inner">
+    <div class="head-row">
+      <h1>本机字体<span class="dot"> · </span>Font Gallery</h1>
+      <span class="sub" id="sub"></span>
+    </div>
+    <div class="controls">
+      <div class="ctrl">
+        <input type="search" id="q" placeholder="搜索字体名称或文件名…" aria-label="搜索字体">
+      </div>
+      <div class="ctrl grow">
+        <span>示例文字</span>
+        <input class="text-input" id="sample" type="text" aria-label="示例文字">
+      </div>
+      <div class="ctrl">
+        <span>字号</span>
+        <input type="range" id="size" min="12" max="72" value="32" aria-label="字号">
+        <span class="size-val" id="sizeVal">32</span>
+      </div>
+      <div class="seg" role="group" aria-label="字重">
+        <button data-w="400" class="on" title="常规">常规</button>
+        <button data-w="700" title="粗体">粗体</button>
+      </div>
+      <div class="seg" role="group" aria-label="样式">
+        <button id="italicBtn" title="斜体">I</button>
+      </div>
+      <div class="ctrl">
+        <button class="chip zh-chip" id="zhBtn" title="只显示中文字体">中文<span class="n" id="zhN"></span></button>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+
+<main>
+  <div id="grid"></div>
+  <div id="empty"><div class="big">&#128066;</div><div>没有找到匹配的字体</div></div>
+</main>
+
+<footer>
+  页面使用本机已安装字体渲染，无需联网。共 <b id="total"></b> 款字体 · 生成于 2026-08-16 · 数据来源：本机字体目录
+</footer>
+
+<div id="modal" role="dialog" aria-modal="true" aria-label="字体预览">
+  <div class="backdrop" id="mBackdrop"></div>
+  <div class="panel">
+    <button id="mClose" aria-label="关闭">&#10005;</button>
+    <div id="mName"></div>
+    <div id="mSample"></div>
+    <div id="mMeta"></div>
+  </div>
+</div>
+
+<script>
+const FONTS = [{"name": "\u5f97\u610f\u9ed1", "files": ["SmileySans-Oblique.ttf"], "cat": "sans"}, {"name": "\u7b49\u7ebf", "files": ["Deng.ttf", "Dengb.ttf"], "cat": "sans"}, {"name": "\u7b49\u7ebf Light", "files": ["Dengl.ttf"], "cat": "sans"}, {"name": "\u4eff\u5b8b", "files": ["simfang.ttf"], "cat": "serif"}, {"name": "\u65b9\u6b63\u4e2d\u96c5\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u4e2d\u96c5\u5b8b\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u4e2d\u96c5\u5b8b\u7e41\u4f53", "files": ["\u65b9\u6b63\u4e2d\u96c5\u5b8b\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u50cf\u7d2012", "files": ["\u65b9\u6b63\u50cf\u7d2012.TTF"], "cat": "other"}, {"name": "\u65b9\u6b63\u5170\u4ead\u520a\u9ed1_Consolas", "files": ["\u65b9\u6b63\u5170\u4ead\u520a\u9ed1_Consolas.ttf"], "cat": "sans"}, {"name": "\u65b9\u6b63\u5170\u4ead\u7c97\u9ed1_GBK", "files": ["\u5170\u4ead\u7c97\u9ed1 GBK.TTF"], "cat": "sans"}, {"name": "\u65b9\u6b63\u5170\u4ead\u7ea4\u9ed1_GBK", "files": ["\u5170\u4ead\u7ea4\u9ed1 GBK.TTF"], "cat": "sans"}, {"name": "\u65b9\u6b63\u5170\u4ead\u7ec6\u9ed1_GBK_M", "files": ["\u5170\u4ead\u7ec6\u9ed1 GBK Mobil.TTF"], "cat": "sans"}, {"name": "\u65b9\u6b63\u5170\u4ead\u9ed1_GBK", "files": ["\u5170\u4ead\u9ed1 GBK.TTF"], "cat": "sans"}, {"name": "\u65b9\u6b63\u51c6\u96c5\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u51c6\u96c5\u5b8b\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u51c6\u96c5\u5b8b\u7e41\u4f53", "files": ["\u65b9\u6b63\u51c6\u96c5\u5b8b\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u520a\u5b8b_GBK", "files": ["\u65b9\u6b63\u535a\u96c5\u520a\u5b8b_GBK.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u520a\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u535a\u96c5\u520a\u5b8b\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u520a\u5b8b\u7e41\u4f53", "files": ["\u65b9\u6b63\u535a\u96c5\u520a\u5b8b\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u535a\u96c5\u5b8b\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u5b8b\u7e41\u4f53", "files": ["\u65b9\u6b63\u535a\u96c5\u5b8b\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u65b9\u520a\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u535a\u96c5\u65b9\u520a\u5b8b\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u535a\u96c5\u65b9\u520a\u5b8b\u7e41\u4f53", "files": ["\u65b9\u6b63\u535a\u96c5\u65b9\u520a\u5b8b\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u57fa\u7840\u50cf\u7d20", "files": ["\u65b9\u6b63\u57fa\u7840\u50cf\u7d20.ttf"], "cat": "other"}, {"name": "\u65b9\u6b63\u5927\u6807\u5b8b\u7b80\u4f53", "files": ["FZDBSJW.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u59da\u4f53", "files": ["FZYTK.TTF"], "cat": "hand"}, {"name": "\u65b9\u6b63\u660e\u5c1a\u7b80\u4f53", "files": ["\u57fa\u7763\u5c71\u4f2f\u7235.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7279\u96c5\u5b8b_GBK", "files": ["\u65b9\u6b63\u7279\u96c5\u5b8b_GBK.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u8c2d\u9ed1\u7b80\u4f53", "files": ["fangzhengcutanheijianti941.ttf"], "cat": "sans"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b_GBK", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b_GBK.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u6241_GBK", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u6241_GBK.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u6241\u7b80\u4f53", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u6241\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u6241\u7e41\u4f53", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u6241\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u7e41\u4f53", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u957f_GBK", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u957f_GBK.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u957f\u7b80\u4f53", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u957f\u7b80\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7c97\u96c5\u5b8b\u957f\u7e41\u4f53", "files": ["\u65b9\u6b63\u7c97\u96c5\u5b8b\u957f\u7e41\u4f53.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u7ec6\u9ed1\u4e00\u7b80\u4f53", "files": ["FZXH1JW.TTF"], "cat": "sans"}, {"name": "\u65b9\u6b63\u8212\u4f53", "files": ["FZSTK.TTF"], "cat": "hand"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 Bold.TTF", "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 DemiBold", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 DemiBold.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 ExtraLight", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 ExtraLight.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 Light", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 Light.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 Medium", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 Medium.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 SemiBold", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b \u7b80 SemiBold.TTF"], "cat": "serif"}, {"name": "\u65b9\u6b63\u98ce\u96c5\u5b8b\u7b80\u4f53", "files": ["\u65b9\u6b63\u98ce\u96c5\u5b8b.ttf"], "cat": "serif"}, {"name": "\u6c49\u4eea\u529b\u91cf\u9ed1\u7b80", "files": ["\u6c49\u4eea\u529b\u91cf\u9ed1\u7b805.0.ttf"], "cat": "sans"}, {"name": "\u6c49\u4eea\u7279\u7ec6\u7b49\u7ebf\u7b80", "files": ["\u6c49\u4eea\u7279\u7ec6\u7b49\u7ebf\u7b80.ttf"], "cat": "sans"}, {"name": "\u6c49\u4eea\u963f\u5c14\u8328\u6d77\u9ed8\u75c5\u4f53", "files": ["HYAlzheimer.ttf"], "cat": "other"}, {"name": "\u9ed1\u4f53", "files": ["simhei.ttf"], "cat": "sans"}, {"name": "\u534e\u5eb7\u65b9\u5706\u4f53W7", "files": ["\u534e\u5eb7\u65b9\u5706\u4f53W7.TTC"], "cat": "other"}, {"name": "\u534e\u5eb7\u65b9\u5706\u4f53W7(P)", "files": ["\u534e\u5eb7\u65b9\u5706\u4f53W7.TTC"], "cat": "other"}, {"name": "\u534e\u6587\u4e2d\u5b8b", "files": ["STZHONGS.TTF"], "cat": "serif"}, {"name": "\u534e\u6587\u4eff\u5b8b", "files": ["STFANGSO.TTF"], "cat": "serif"}, {"name": "\u534e\u6587\u5b8b\u4f53", "files": ["STSONG.TTF"], "cat": "serif"}, {"name": "\u534e\u6587\u5f69\u4e91", "files": ["STCAIYUN.TTF"], "cat": "display"}, {"name": "\u534e\u6587\u65b0\u9b4f", "files": ["STXINWEI.TTF"], "cat": "display"}, {"name": "\u534e\u6587\u6977\u4f53", "files": ["STKAITI.TTF"], "cat": "hand"}, {"name": "\u534e\u6587\u7425\u73c0", "files": ["STHUPO.TTF"], "cat": "display"}, {"name": "\u534e\u6587\u7ec6\u9ed1", "files": ["STXIHEI.TTF"], "cat": "sans"}, {"name": "\u534e\u6587\u884c\u6977", "files": ["STXINGKA.TTF"], "cat": "display"}, {"name": "\u534e\u6587\u96b6\u4e66", "files": ["STLITI.TTF"], "cat": "display"}, {"name": "\u7ecf\u5178\u7c97\u4eff\u9ed1", "files": ["cufanghei.TTF"], "cat": "sans"}, {"name": "\u6977\u4f53", "files": ["simkai.ttf"], "cat": "hand"}, {"name": "\u7406\u674f\u7f8e\u73b2\u5b8b\u4f53", "files": ["\u7406\u674f\u7f8e\u73b2\u5b8b\u4f53\u0093-M.ttf"], "cat": "serif"}, {"name": "\u96b6\u4e66", "files": ["SIMLI.TTF"], "cat": "display"}, {"name": "\u4e09\u6781\u82b1\u671d\u4f53 \u7c97", "files": ["\u4e09\u6781\u82b1\u671d\u4f53 \u7c97.ttf"], "cat": "other"}, {"name": "\u4e09\u6781\u82b1\u671d\u4f53 \u7ea4\u7ec6", "files": ["\u4e09\u6781\u82b1\u671d\u4f53 \u7ea4\u7ec6.ttf"], "cat": "other"}, {"name": "\u4e09\u6781\u82b1\u671d\u4f53 \u7ec6", "files": ["\u4e09\u6781\u82b1\u671d\u4f53 \u7ec6.ttf"], "cat": "other"}, {"name": "\u601d\u6e90\u9ed1\u4f53 Bold", "files": ["SourceHanSansSC-Bold.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 ExtraLight", "files": ["SourceHanSansSC-ExtraLight.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 Heavy", "files": ["SourceHanSansSC-Heavy.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 HW Bold", "files": ["SourceHanSansHWSC-Bold.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 HW Regular", "files": ["SourceHanSansHWSC-Regular.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 Light", "files": ["SourceHanSansSC-Light.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 Medium", "files": ["SourceHanSansSC-Medium.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 Normal", "files": ["SourceHanSansSC-Normal.otf"], "cat": "sans"}, {"name": "\u601d\u6e90\u9ed1\u4f53 Regular", "files": ["SourceHanSansSC-Regular.otf"], "cat": "sans"}, {"name": "\u5b8b\u4f53", "files": ["simsun.ttc"], "cat": "serif"}, {"name": "\u751c\u6a59\u70b9\u9635\u4f53", "files": ["TianChengBit-Regular.otf"], "cat": "other"}, {"name": "\u5fae\u8edf\u6b63\u9ed1\u9ad4", "files": ["msjh.ttc", "msjhbd.ttc"], "cat": "sans"}, {"name": "\u5fae\u8edf\u6b63\u9ed1\u9ad4 Light", "files": ["msjhl.ttc"], "cat": "sans"}, {"name": "\u5fae\u8f6f\u96c5\u9ed1", "files": ["msyh.ttc", "msyhbd.ttc"], "cat": "sans"}, {"name": "\u5fae\u8f6f\u96c5\u9ed1 Light", "files": ["msyhl.ttc"], "cat": "sans"}, {"name": "\u7d30\u660e\u9ad4-ExtB", "files": ["mingliub.ttc"], "cat": "serif"}, {"name": "\u7d30\u660e\u9ad4_HKSCS-ExtB", "files": ["mingliub.ttc"], "cat": "serif"}, {"name": "\u65b0\u5b8b\u4f53", "files": ["simsun.ttc"], "cat": "serif"}, {"name": "\u65b0\u7d30\u660e\u9ad4-ExtB", "files": ["mingliub.ttc"], "cat": "serif"}, {"name": "\u5e7c\u5706", "files": ["SIMYOU.TTF"], "cat": "display"}, {"name": "\u9020\u5b57\u5de5\u623f\u4fca\u96c5\uff08\u975e\u5546\u7528\uff09\u5e38\u89c4\u4f53", "files": ["\u9020\u5b57\u5de5\u623f\u4fca\u96c5\u5e38\u89c4\u4f53.ttf"], "cat": "other"}, {"name": "\u9020\u5b57\u5de5\u623f\u52b2\u9ed1\uff08\u975e\u5546\u7528\uff09\u5e38\u89c4\u4f53", "files": ["\u9020\u5b57\u5de5\u623f\u52b2\u9ed1\u5e38\u89c4\u4f53.ttf"], "cat": "sans"}, {"name": "\u9020\u5b57\u5de5\u623f\u535a\u9ed1\uff08\u975e\u5546\u7528\uff09\u5e38\u89c4\u4f53", "files": ["\u9020\u5b57\u5de5\u623f\u535a\u9ed1\u5e38\u89c4\u4f53.ttf"], "cat": "sans"}, {"name": "\u9020\u5b57\u5de5\u623f\u5c1a\u96c5\uff08\u975e\u5546\u7528\uff09\u5e38\u89c4\u4f53", "files": ["\u9020\u5b57\u5de5\u623f\u5c1a\u96c5\u5e38\u89c4\u4f53.ttf"], "cat": "other"}, {"name": "\u9020\u5b57\u5de5\u623f\u6469\u767b\uff08\u975e\u5546\u7528\uff09\u5e38\u89c4\u4f53", "files": ["\u9020\u5b57\u5de5\u623f\u6469\u767b.ttf"], "cat": "other"}, {"name": "\u9020\u5b57\u5de5\u623f\u8a00\u5b8b\uff08\u975e\u5546\u7528\uff09\u5e38\u89c4\u4f53", "files": ["\u9020\u5b57\u5de5\u623f\u8a00\u5b8b\u5e38\u89c4\u4f53.ttf"], "cat": "serif"}, {"name": "\u5f20\u6d77\u5c71\u9510\u7ebf\u4f53\u7b80", "files": ["\u5f20\u6d77\u5c71\u9510\u7ebf\u4f53\u7b80.ttf"], "cat": "other"}, {"name": "\u2605\u98a8\u96f2", "files": ["\u2605\u98a8\u96f2.ttf"], "cat": "other"}, {"name": "A-OTF Kocho Std Heavy", "files": ["A-OTF \u5149\u671d Std .otf"], "cat": "other"}, {"name": "A-OTF MainichiNewspapersM Pro L", "files": ["A-OTF \u6bce\u65e5\u65b0\u805e\u660e\u671d Pro.otf"], "cat": "other"}, {"name": "Adega Serif", "files": ["ADega Serif italic.otf"], "cat": "serif"}, {"name": "Agency FB", "files": ["AGENCYB.TTF", "AGENCYR.TTF"], "cat": "display"}, {"name": "Algerian", "files": ["ALGER.TTF"], "cat": "display"}, {"name": "Anthurea", "files": ["Anthurea.otf"], "cat": "other"}, {"name": "Arial", "files": ["arial.ttf", "arialbd.ttf", "arialbi.ttf", "ariali.ttf", "ARIALN.TTF", "ARIALNB.TTF", "ARIALNBI.TTF", "ARIALNI.TTF", "ariblk.ttf", "ARLRDBD.TTF"], "cat": "sans"}, {"name": "Arial Black", "files": ["ariblk.ttf"], "cat": "sans"}, {"name": "Arial Narrow", "files": ["ARIALN.TTF", "ARIALNB.TTF", "ARIALNBI.TTF", "ARIALNI.TTF"], "cat": "sans"}, {"name": "Arial Rounded MT Bold", "files": ["ARLRDBD.TTF"], "cat": "sans"}, {"name": "Averia Serif", "files": ["AveriaSerif-Light.ttf"], "cat": "serif"}, {"name": "Bahnschrift", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift Condensed", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift Light", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift Light Condensed", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift Light SemiCondensed", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiBold", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiBold Condensed", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiBold SemiConden", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiCondensed", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiLight", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiLight Condensed", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Bahnschrift SemiLight SemiConde", "files": ["bahnschrift.ttf"], "cat": "sans"}, {"name": "Baskerville", "files": ["Baskerville.ttc"], "cat": "serif"}, {"name": "Baskerville Old Face", "files": ["BASKVILL.TTF"], "cat": "serif"}, {"name": "Bauhaus 93", "files": ["BAUHS93.TTF"], "cat": "display"}, {"name": "Bell MT", "files": ["BELL.TTF", "BELLB.TTF", "BELLI.TTF"], "cat": "serif"}, {"name": "Berlin Sans FB", "files": ["BRLNSB.TTF", "BRLNSDB.TTF", "BRLNSR.TTF"], "cat": "sans"}, {"name": "Berlin Sans FB Demi", "files": ["BRLNSDB.TTF"], "cat": "sans"}, {"name": "Bernard MT Condensed", "files": ["BERNHC.TTF"], "cat": "serif"}, {"name": "Blackadder ITC", "files": ["ITCBLKAD.TTF"], "cat": "display"}, {"name": "Bodoni MT", "files": ["BOD_B.TTF", "BOD_BI.TTF", "BOD_BLAI.TTF", "BOD_BLAR.TTF", "BOD_CB.TTF", "BOD_CBI.TTF", "BOD_CI.TTF", "BOD_CR.TTF", "BOD_I.TTF", "BOD_PSTC.TTF", "BOD_R.TTF", "BOD.TTF"], "cat": "serif"}, {"name": "Bodoni MT Black", "files": ["BOD_BLAI.TTF", "BOD_BLAR.TTF"], "cat": "serif"}, {"name": "Bodoni MT Condensed", "files": ["BOD_0.TTF", "BOD_CB.TTF", "BOD_CBI.TTF", "BOD_CI.TTF", "BOD_CR.TTF"], "cat": "serif"}, {"name": "Bodoni MT Poster Compressed", "files": ["BOD_PSTC.TTF"], "cat": "serif"}, {"name": "Book Antiqua", "files": ["ANTQUAB.TTF", "ANTQUABI.TTF", "ANTQUAI.TTF", "BKANT.TTF"], "cat": "serif"}, {"name": "Bookman Old Style", "files": ["BOOKOS.TTF", "BOOKOSB.TTF", "BOOKOSBI.TTF", "BOOKOSI.TTF"], "cat": "serif"}, {"name": "Bradley Hand ITC", "files": ["BRADHITC.TTF"], "cat": "hand"}, {"name": "Britannic Bold", "files": ["BRITANIC.TTF"], "cat": "display"}, {"name": "Broadway", "files": ["BROADW.TTF"], "cat": "display"}, {"name": "Brush Script MT", "files": ["BRUSHSCI.TTF"], "cat": "hand"}, {"name": "Calibri", "files": ["calibri.ttf", "calibrib.ttf", "calibrii.ttf", "calibril.ttf", "calibrili.ttf", "calibriz.ttf"], "cat": "sans"}, {"name": "Calibri Light", "files": ["calibril.ttf", "calibrili.ttf"], "cat": "sans"}, {"name": "Californian FB", "files": ["CALIFB.TTF", "CALIFI.TTF", "CALIFR.TTF"], "cat": "serif"}, {"name": "Calisto MT", "files": ["CALIST.TTF", "CALISTB.TTF", "CALISTBI.TTF", "CALISTI.TTF"], "cat": "serif"}, {"name": "Cambria", "files": ["cambria.ttc", "cambriab.ttf", "cambriai.ttf", "cambriaz.ttf"], "cat": "serif"}, {"name": "Cambria Math", "files": ["cambria.ttc"], "cat": "serif"}, {"name": "Candara", "files": ["candara.ttf", "candarab.ttf", "candarai.ttf", "candaral.ttf", "candarali.ttf", "candaraz.ttf"], "cat": "sans"}, {"name": "Candara Light", "files": ["candaral.ttf", "candarali.ttf"], "cat": "sans"}, {"name": "Canela Thin", "files": ["Canela-Thin.otf"], "cat": "other"}, {"name": "Capture it", "files": ["Capture it.ttf"], "cat": "other"}, {"name": "Castellar", "files": ["CASTELAR.TTF"], "cat": "display"}, {"name": "Centaur", "files": ["CENTAUR.TTF"], "cat": "serif"}, {"name": "Century", "files": ["CENSCBK.TTF", "CENTURY.TTF", "GOTHIC.TTF", "GOTHICB.TTF", "GOTHICBI.TTF", "GOTHICI.TTF", "SCHLBKB.TTF", "SCHLBKBI.TTF", "SCHLBKI.TTF"], "cat": "serif"}, {"name": "Century Gothic", "files": ["GOTHIC.TTF", "GOTHICB.TTF", "GOTHICBI.TTF", "GOTHICI.TTF"], "cat": "sans"}, {"name": "Century Schoolbook", "files": ["CENSCBK.TTF", "SCHLBKB.TTF", "SCHLBKBI.TTF", "SCHLBKI.TTF"], "cat": "serif"}, {"name": "Chiller", "files": ["CHILLER.TTF"], "cat": "display"}, {"name": "Colonna MT", "files": ["COLONNA.TTF"], "cat": "display"}, {"name": "Comic Sans MS", "files": ["comic.ttf", "comicbd.ttf", "comici.ttf", "comicz.ttf"], "cat": "hand"}, {"name": "Complex_IV25", "files": ["complex_IV25.ttf"], "cat": "other"}, {"name": "Complex_IV50", "files": ["complex_IV50.ttf"], "cat": "other"}, {"name": "Consolas", "files": ["consola.ttf", "consolab.ttf", "consolai.ttf", "consolaz.ttf"], "cat": "mono"}, {"name": "Constantia", "files": ["constan.ttf", "constanb.ttf", "constani.ttf", "constanz.ttf"], "cat": "serif"}, {"name": "Cooper Black", "files": ["COOPBL.TTF"], "cat": "display"}, {"name": "Copperplate Gothic Bold", "files": ["COPRGTB.TTF"], "cat": "sans"}, {"name": "Copperplate Gothic Light", "files": ["COPRGTL.TTF"], "cat": "sans"}, {"name": "Corbel", "files": ["corbel.ttf", "corbelb.ttf", "corbeli.ttf", "corbell.ttf", "corbelli.ttf", "corbelz.ttf"], "cat": "sans"}, {"name": "Corbel Light", "files": ["corbell.ttf", "corbelli.ttf"], "cat": "sans"}, {"name": "Courier New", "files": ["cour.ttf", "courbd.ttf", "courbi.ttf", "couri.ttf"], "cat": "mono"}, {"name": "Culture", "files": ["Culture-Bold.otf", "Culture.otf"], "cat": "other"}, {"name": "Curlz MT", "files": ["CURLZ___.TTF", "CURLZ__.TTF"], "cat": "display"}, {"name": "DejaVu Math TeX Gyre", "files": ["DejaVuMathTeXGyre.ttf"], "cat": "other"}, {"name": "Didot", "files": ["didot-htf-b64-bold-ital.ttf", "didot-htf-m96-medium-ital.ttf", "Didot.ttf"], "cat": "serif"}, {"name": "Didot LT Std", "files": ["DidotLTStd-Bold.otf", "DidotLTStd-Roman.otf"], "cat": "serif"}, {"name": "Didot LT Std Headline", "files": ["DidotLTStd-Headline.otf"], "cat": "serif"}, {"name": "Didot-HTF-L24-Light-Ital", "files": ["didot-htf-l24-light-ital.ttf"], "cat": "serif"}, {"name": "Dubai", "files": ["DUBAI-BOLD.TTF", "DUBAI-LIGHT.TTF", "DUBAI-MEDIUM.TTF", "DUBAI-REGULAR.TTF"], "cat": "sans"}, {"name": "Dubai Light", "files": ["DUBAI-LIGHT.TTF"], "cat": "sans"}, {"name": "Dubai Medium", "files": ["DUBAI-MEDIUM.TTF"], "cat": "sans"}, {"name": "Ebrima", "files": ["ebrima.ttf", "ebrimabd.ttf"], "cat": "sans"}, {"name": "Edwardian Script ITC", "files": ["ITCEDSCR.TTF"], "cat": "hand"}, {"name": "Elephant", "files": ["ELEPHNT.TTF", "ELEPHNTI.TTF"], "cat": "display"}, {"name": "Engravers MT", "files": ["ENGR.TTF"], "cat": "display"}, {"name": "Eras Bold ITC", "files": ["ERASBD.TTF"], "cat": "sans"}, {"name": "Eras Demi ITC", "files": ["ERASDEMI.TTF"], "cat": "sans"}, {"name": "Eras Light ITC", "files": ["ERASLGHT.TTF"], "cat": "sans"}, {"name": "Eras Medium ITC", "files": ["ERASMD.TTF"], "cat": "sans"}, {"name": "Fashion Compressed Std", "files": ["FashionCompressedStd.otf"], "cat": "other"}, {"name": "Felix Titling", "files": ["FELIXTI.TTF"], "cat": "display"}, {"name": "Figuerola", "files": ["Figuerola.otf"], "cat": "other"}, {"name": "Footlight MT Light", "files": ["FTLTLT.TTF"], "cat": "serif"}, {"name": "Forte", "files": ["FORTE.TTF"], "cat": "display"}, {"name": "Franklin Gothic Book", "files": ["FRABK.TTF", "FRABKIT.TTF"], "cat": "sans"}, {"name": "Franklin Gothic Demi", "files": ["FRADM.TTF", "FRADMCN.TTF", "FRADMIT.TTF"], "cat": "sans"}, {"name": "Franklin Gothic Demi Cond", "files": ["FRADMCN.TTF"], "cat": "sans"}, {"name": "Franklin Gothic Heavy", "files": ["FRAHV.TTF", "FRAHVIT.TTF"], "cat": "sans"}, {"name": "Franklin Gothic Medium", "files": ["framd.ttf", "FRAMDCN.TTF", "framdit.ttf"], "cat": "sans"}, {"name": "Franklin Gothic Medium Cond", "files": ["FRAMDCN.TTF"], "cat": "sans"}, {"name": "Freestyle Script", "files": ["FREESCPT.TTF"], "cat": "hand"}, {"name": "French Script MT", "files": ["FRSCRIPT.TTF"], "cat": "hand"}, {"name": "Gabriola", "files": ["Gabriola.ttf"], "cat": "display"}, {"name": "Gadugi", "files": ["gadugi.ttf", "gadugib.ttf"], "cat": "sans"}, {"name": "Garamond", "files": ["GARA.TTF", "GARABD.TTF", "GARAIT.TTF"], "cat": "serif"}, {"name": "GENISO", "files": ["GENISO.ttf"], "cat": "other"}, {"name": "Georgia", "files": ["georgia.ttf", "georgiab.ttf", "georgiai.ttf", "georgiaz.ttf"], "cat": "serif"}, {"name": "Gigi", "files": ["GIGI.TTF"], "cat": "display"}, {"name": "Gill Sans MT", "files": ["GIL_____.TTF", "GIL____.TTF", "GILB____.TTF", "GILB___.TTF", "GILBI___.TTF", "GILBI__.TTF", "GILC____.TTF", "GILI____.TTF", "GILI___.TTF", "GLSNECB.TTF"], "cat": "sans"}, {"name": "Gill Sans MT Condensed", "files": ["GILC____.TTF", "GILC___.TTF"], "cat": "sans"}, {"name": "Gill Sans MT Ext Condensed Bold", "files": ["GLSNECB.TTF"], "cat": "sans"}, {"name": "Gill Sans Ultra Bold", "files": ["GILLUBCD.TTF", "GILSANUB.TTF"], "cat": "sans"}, {"name": "Gill Sans Ultra Bold Condensed", "files": ["GILLUBCD.TTF"], "cat": "sans"}, {"name": "GOST Common", "files": ["GOST Common Italic.ttf", "GOST Common.ttf"], "cat": "other"}, {"name": "Goudy Old Style", "files": ["GOUDOS.TTF", "GOUDOSB.TTF", "GOUDOSI.TTF"], "cat": "serif"}, {"name": "Goudy Stout", "files": ["GOUDYSTO.TTF"], "cat": "serif"}, {"name": "GreekC_IV25", "files": ["greekc_IV25.ttf"], "cat": "other"}, {"name": "GreekC_IV50", "files": ["greekc_IV50.ttf"], "cat": "other"}, {"name": "GreekS_IV25", "files": ["greeks_IV25.ttf"], "cat": "other"}, {"name": "GreekS_IV50", "files": ["greeks_IV50.ttf"], "cat": "other"}, {"name": "Haettenschweiler", "files": ["HATTEN.TTF"], "cat": "display"}, {"name": "Harlow Solid Italic", "files": ["HARLOWSI.TTF"], "cat": "display"}, {"name": "Harrington", "files": ["HARNGTON.TTF"], "cat": "display"}, {"name": "Helvetica Inserat LT Std", "files": ["HelveticaInseratLTStd-Roman.otf"], "cat": "sans"}, {"name": "Helvetica LT Std", "files": ["HelveticaLTStd-Bold.otf", "HelveticaLTStd-BoldObl.otf", "HelveticaLTStd-Obl.otf", "HelveticaLTStd-Roman.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Black", "files": ["HelveticaLTStd-Blk.otf", "HelveticaLTStd-BlkObl.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Compressed", "files": ["HelveticaLTStd-Comp.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Cond", "files": ["HelveticaLTStd-BoldCond.otf", "HelveticaLTStd-BoldCondObl.otf", "HelveticaLTStd-Cond.otf", "HelveticaLTStd-CondObl.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Cond Blk", "files": ["HelveticaLTStd-BlkCond.otf", "HelveticaLTStd-BlkCondObl.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Cond Light", "files": ["HelveticaLTStd-LightCond.otf", "HelveticaLTStd-LightCondObl.otf"], "cat": "sans"}, {"name": "Helvetica LT Std ExtCompressed", "files": ["HelveticaLTStd-ExtraComp.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Fractions", "files": ["HelveticaLTStd-Fractions.otf", "HelveticaLTStd-FractionsBd.otf"], "cat": "sans"}, {"name": "Helvetica LT Std Light", "files": ["HelveticaLTStd-Light.otf", "HelveticaLTStd-LightObl.otf"], "cat": "sans"}, {"name": "Helvetica LT Std UltCompressed", "files": ["HelveticaLTStd-UltraComp.otf"], "cat": "sans"}, {"name": "HelveticaNeueLT Std", "files": ["HelveticaNeueLTStd-It.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Blk", "files": ["HelveticaNeueLTStd-BlkIt.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Blk Cn", "files": ["HelveticaNeueLTStd-BlkCn.otf", "HelveticaNeueLTStd-BlkCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Blk Ext", "files": ["HelveticaNeueLTStd-BlkEx.otf", "HelveticaNeueLTStd-BlkExO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Bold Outln", "files": ["HelveticaNeueLTStd-BdOu.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Cn", "files": ["HelveticaNeueLTStd-BdCn.otf", "HelveticaNeueLTStd-BdCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Ext", "files": ["HelveticaNeueLTStd-Ex.otf", "HelveticaNeueLTStd-ExO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std ExtBlk Cn", "files": ["HelveticaNeueLTStd-XBlkCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Extended", "files": ["HelveticaNeueLTStd-BdEx.otf", "HelveticaNeueLTStd-BdExO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Lt", "files": ["HelveticaNeueLTStd-LtIt.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Lt Cn", "files": ["HelveticaNeueLTStd-LtCn.otf", "HelveticaNeueLTStd-LtCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Lt Ext", "files": ["HelveticaNeueLTStd-LtEx.otf", "HelveticaNeueLTStd-LtExO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Med", "files": ["HelveticaNeueLTStd-Hv.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Med Cn", "files": ["HelveticaNeueLTStd-HvCn.otf", "HelveticaNeueLTStd-HvCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Med Ext", "files": ["HelveticaNeueLTStd-HvEx.otf", "HelveticaNeueLTStd-HvExO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Thin", "files": ["HelveticaNeueLTStd-ThIt.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Thin Cn", "files": ["HelveticaNeueLTStd-ThCn.otf", "HelveticaNeueLTStd-ThCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std Thin Ext", "files": ["HelveticaNeueLTStd-ThEx.otf", "HelveticaNeueLTStd-ThExO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std UltLt", "files": ["HelveticaNeueLTStd-UltLtIt.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std UltLt Cn", "files": ["HelveticaNeueLTStd-UltLtCn.otf", "HelveticaNeueLTStd-UltLtCnO.otf"], "cat": "other"}, {"name": "HelveticaNeueLT Std UltLt Ext", "files": ["HelveticaNeueLTStd-UltLtEx.otf", "HelveticaNeueLTStd-UltLtExO.otf"], "cat": "other"}, {"name": "HelveticaRounded LT Std Bd", "files": ["HelveticaRoundedLTStd-Bd.otf", "HelveticaRoundedLTStd-BdO.otf"], "cat": "other"}, {"name": "HelveticaRounded LT Std BdCn", "files": ["HelveticaRoundedLTStd-BdCn.otf", "HelveticaRoundedLTStd-BdCnO.otf"], "cat": "other"}, {"name": "HelveticaRounded LT Std Blk", "files": ["HelveticaRoundedLTStd-Black.otf", "HelveticaRoundedLTStd-BlkO.otf"], "cat": "other"}, {"name": "High Tower Text", "files": ["HTOWERT.TTF", "HTOWERTI.TTF"], "cat": "serif"}, {"name": "Impact", "files": ["impact.ttf"], "cat": "display"}, {"name": "Imprint MT Shadow", "files": ["IMPRISHA.TTF"], "cat": "serif"}, {"name": "Informal Roman", "files": ["INFROMAN.TTF"], "cat": "hand"}, {"name": "Ink Free", "files": ["Inkfree.ttf"], "cat": "hand"}, {"name": "ISOCP2_IV25", "files": ["isocp2_IV25.ttf"], "cat": "other"}, {"name": "ISOCP2_IV50", "files": ["isocp2_IV50.ttf"], "cat": "other"}, {"name": "ISOCP3_IV25", "files": ["isocp3_IV25.ttf"], "cat": "other"}, {"name": "ISOCP3_IV50", "files": ["isocp3_IV50.ttf"], "cat": "other"}, {"name": "ISOCP_IV25", "files": ["isocp_IV25.ttf"], "cat": "other"}, {"name": "ISOCP_IV50", "files": ["isocp_IV50.ttf"], "cat": "other"}, {"name": "ISOCT2_IV25", "files": ["isoct2_IV25.ttf"], "cat": "other"}, {"name": "ISOCT2_IV50", "files": ["isoct2_IV50.ttf"], "cat": "other"}, {"name": "ISOCT3_IV25", "files": ["isoct3_IV25.ttf"], "cat": "other"}, {"name": "ISOCT3_IV50", "files": ["isoct3_IV50.ttf"], "cat": "other"}, {"name": "ISOCT_IV25", "files": ["isoct_IV25.ttf"], "cat": "other"}, {"name": "ISOCT_IV50", "files": ["isoct_IV50.ttf"], "cat": "other"}, {"name": "Javanese Text", "files": ["javatext.ttf"], "cat": "sans"}, {"name": "Jokerman", "files": ["JOKERMAN.TTF"], "cat": "display"}, {"name": "Juice ITC", "files": ["JUICE___.TTF"], "cat": "display"}, {"name": "Kozuka Mincho Pr6N B", "files": ["\u6e90\u30ce\u660e\u671d Kozuka Mincho Pr6N-Bold.otf"], "cat": "other"}, {"name": "Kristen ITC", "files": ["ITCKRIST.TTF"], "cat": "hand"}, {"name": "Kunstler Script", "files": ["KUNSTLER.TTF"], "cat": "display"}, {"name": "La Luxes Serif", "files": ["La Luxes Serif.ttf"], "cat": "serif"}, {"name": "Latino Elongated Std", "files": ["LatinoElongatedStd.otf"], "cat": "other"}, {"name": "Leelawadee", "files": ["leelauib.ttf", "LEELAWAD.TTF", "LEELAWDB.TTF", "leelawui.ttf", "leeluisl.ttf"], "cat": "sans"}, {"name": "Leelawadee UI", "files": ["leelauib.ttf", "leelawui.ttf", "leeluisl.ttf"], "cat": "sans"}, {"name": "Leelawadee UI Semilight", "files": ["leeluisl.ttf"], "cat": "sans"}, {"name": "Lucida Bright", "files": ["LBRITE.TTF", "LBRITED.TTF", "LBRITEDI.TTF", "LBRITEI.TTF"], "cat": "serif"}, {"name": "Lucida Calligraphy", "files": ["LCALLIG.TTF"], "cat": "hand"}, {"name": "Lucida Console", "files": ["lucon.TTF"], "cat": "mono"}, {"name": "Lucida Fax", "files": ["LFAX.TTF", "LFAXD.TTF", "LFAXDI.TTF", "LFAXI.TTF"], "cat": "serif"}, {"name": "Lucida Handwriting", "files": ["LHANDW.TTF"], "cat": "hand"}, {"name": "Lucida Sans", "files": ["l_10646.ttf", "LSANS.TTF", "LSANSD.TTF", "LSANSDI.TTF", "LSANSI.TTF", "LTYPE.TTF", "LTYPEB.TTF", "LTYPEBO.TTF", "LTYPEO.TTF"], "cat": "sans"}, {"name": "Lucida Sans Typewriter", "files": ["LTYPE.TTF", "LTYPEB.TTF", "LTYPEBO.TTF", "LTYPEO.TTF"], "cat": "sans"}, {"name": "Lucida Sans Unicode", "files": ["l_10646.ttf", "l.ttf"], "cat": "sans"}, {"name": "Magneto", "files": ["MAGNETOB.TTF"], "cat": "display"}, {"name": "Maiandra GD", "files": ["MAIAN.TTF"], "cat": "display"}, {"name": "Malgun Gothic", "files": ["malgun.ttf", "malgunbd.ttf", "malgunsl.ttf"], "cat": "sans"}, {"name": "Malgun Gothic Semilight", "files": ["malgunsl.ttf"], "cat": "sans"}, {"name": "Matura MT Script Capitals", "files": ["MATURASC.TTF"], "cat": "display"}, {"name": "Microsoft Himalaya", "files": ["himalaya.ttf"], "cat": "sans"}, {"name": "Microsoft JhengHei UI", "files": ["msjh.ttc", "msjhbd.ttc"], "cat": "sans"}, {"name": "Microsoft JhengHei UI Light", "files": ["msjhl.ttc"], "cat": "sans"}, {"name": "Microsoft New Tai Lue", "files": ["ntailu.ttf", "ntailub.ttf"], "cat": "sans"}, {"name": "Microsoft PhagsPa", "files": ["phagspa.ttf", "phagspab.ttf"], "cat": "sans"}, {"name": "Microsoft Sans Serif", "files": ["micross.ttf"], "cat": "sans"}, {"name": "Microsoft Tai Le", "files": ["taile.ttf", "taileb.ttf"], "cat": "sans"}, {"name": "Microsoft Uighur", "files": ["MSUIGHUB.TTF", "MSUIGHUR.TTF"], "cat": "sans"}, {"name": "Microsoft YaHei UI", "files": ["msyh.ttc", "msyhbd.ttc"], "cat": "sans"}, {"name": "Microsoft YaHei UI Light", "files": ["msyhl.ttc"], "cat": "sans"}, {"name": "Microsoft Yi Baiti", "files": ["msyi.ttf"], "cat": "sans"}, {"name": "MiSans", "files": ["MiSans-Regular.otf"], "cat": "other"}, {"name": "Misto", "files": ["Misto.ttf"], "cat": "other"}, {"name": "Mistral", "files": ["MISTRAL.TTF"], "cat": "hand"}, {"name": "Modern No. 20", "files": ["MOD20.TTF"], "cat": "serif"}, {"name": "Mongolian Baiti", "files": ["monbaiti.ttf"], "cat": "sans"}, {"name": "Monotxt_IV25", "files": ["monotxt_IV25.ttf"], "cat": "other"}, {"name": "Monotxt_IV50", "files": ["monotxt_IV50.ttf"], "cat": "other"}, {"name": "Monotype Corsiva", "files": ["MTCORSVA.TTF"], "cat": "hand"}, {"name": "MonteCarlo", "files": ["MonteCarlo.otf"], "cat": "other"}, {"name": "MS Gothic", "files": ["msgothic.ttc"], "cat": "sans"}, {"name": "MS PGothic", "files": ["msgothic.ttc"], "cat": "sans"}, {"name": "MS Reference Sans Serif", "files": ["REFSAN.TTF"], "cat": "sans"}, {"name": "MS UI Gothic", "files": ["msgothic.ttc"], "cat": "sans"}, {"name": "MV Boli", "files": ["mvboli.ttf"], "cat": "sans"}, {"name": "Myanmar Text", "files": ["mmrtext.ttf", "mmrtextb.ttf"], "cat": "sans"}, {"name": "Niagara Engraved", "files": ["NIAGENG.TTF"], "cat": "display"}, {"name": "Niagara Solid", "files": ["NIAGSOL.TTF"], "cat": "display"}, {"name": "Nirmala UI", "files": ["Nirmala.ttf", "NirmalaB.ttf", "NirmalaS.ttf"], "cat": "sans"}, {"name": "Nirmala UI Semilight", "files": ["NirmalaS.ttf"], "cat": "sans"}, {"name": "Noto Sans KR", "files": ["NotoSansKR-Regular.otf"], "cat": "sans"}, {"name": "OCR A Extended", "files": ["OCRAEXT.TTF"], "cat": "mono"}, {"name": "Old English Text MT", "files": ["OLDENGL.TTF"], "cat": "display"}, {"name": "Onyx", "files": ["ONYX.TTF"], "cat": "display"}, {"name": "Palace Script MT", "files": ["PALSCRI.TTF"], "cat": "hand"}, {"name": "Palatino Linotype", "files": ["pala.ttf", "palab.ttf", "palabi.ttf", "palai.ttf"], "cat": "serif"}, {"name": "Papyrus", "files": ["PAPYRUS.TTF"], "cat": "display"}, {"name": "Parchment", "files": ["PARCHM.TTF"], "cat": "display"}, {"name": "Perpetua", "files": ["PER_____.TTF", "PER____.TTF", "PERB____.TTF", "PERB___.TTF", "PERBI___.TTF", "PERBI__.TTF", "PERI____.TTF", "PERI___.TTF", "PERTIBD.TTF", "PERTILI.TTF"], "cat": "serif"}, {"name": "Perpetua Titling MT", "files": ["PERTIBD.TTF", "PERTILI.TTF"], "cat": "serif"}, {"name": "Pixel Countdown", "files": ["Pixel-Countdown-1.otf"], "cat": "other"}, {"name": "Playbill", "files": ["PLAYBILL.TTF"], "cat": "display"}, {"name": "Poor Richard", "files": ["POORICH.TTF"], "cat": "serif"}, {"name": "Pristina", "files": ["PRISTINA.TTF"], "cat": "hand"}, {"name": "Rage Italic", "files": ["RAGE.TTF"], "cat": "hand"}, {"name": "Ravie", "files": ["RAVIE.TTF"], "cat": "display"}, {"name": "Recoleta DEMO", "files": ["Recoleta-RegularDEMO.otf"], "cat": "other"}, {"name": "Rockwell", "files": ["ROCC____.TTF", "ROCCB___.TTF", "ROCK.TTF", "ROCKB.TTF", "ROCKBI.TTF", "ROCKEB.TTF", "ROCKI.TTF"], "cat": "serif"}, {"name": "Rockwell Condensed", "files": ["ROCC____.TTF", "ROCC___.TTF", "ROCCB___.TTF", "ROCCB__.TTF"], "cat": "serif"}, {"name": "Rockwell Extra Bold", "files": ["ROCKEB.TTF"], "cat": "serif"}, {"name": "RomanS_IV25", "files": ["romans_IV25.ttf"], "cat": "other"}, {"name": "RomanS_IV50", "files": ["romans_IV50.ttf"], "cat": "other"}, {"name": "Rundfunk Std", "files": ["RundfunkStd.otf"], "cat": "other"}, {"name": "Script MT Bold", "files": ["SCRIPTBL.TTF"], "cat": "hand"}, {"name": "ScriptS_IV25", "files": ["scripts_IV25.ttf"], "cat": "other"}, {"name": "ScriptS_IV50", "files": ["scripts_IV50.ttf"], "cat": "other"}, {"name": "Segoe Print", "files": ["segoepr.ttf", "segoeprb.ttf"], "cat": "hand"}, {"name": "Segoe Script", "files": ["segoesc.ttf", "segoescb.ttf"], "cat": "hand"}, {"name": "Segoe UI", "files": ["segoeui.ttf", "segoeuib.ttf", "segoeuii.ttf", "segoeuil.ttf", "segoeuisl.ttf", "segoeuiz.ttf", "seguibl.ttf", "seguibli.ttf", "seguiemj.ttf", "seguihis.ttf", "seguili.ttf", "seguisb.ttf", "seguisbi.ttf", "seguisli.ttf", "seguisym.ttf"], "cat": "sans"}, {"name": "Segoe UI Black", "files": ["seguibl.ttf", "seguibli.ttf"], "cat": "sans"}, {"name": "Segoe UI Historic", "files": ["seguihis.ttf"], "cat": "sans"}, {"name": "Segoe UI Light", "files": ["segoeuil.ttf", "seguili.ttf"], "cat": "sans"}, {"name": "Segoe UI Semibold", "files": ["seguisb.ttf", "seguisbi.ttf"], "cat": "sans"}, {"name": "Segoe UI Semilight", "files": ["segoeuisl.ttf", "seguisli.ttf"], "cat": "sans"}, {"name": "Showcard Gothic", "files": ["SHOWG.TTF"], "cat": "display"}, {"name": "Simplex_IV25", "files": ["simplex_IV25.ttf"], "cat": "other"}, {"name": "Simplex_IV50", "files": ["simplex_IV50.ttf"], "cat": "other"}, {"name": "SimSun-ExtB", "files": ["simsunb.ttf"], "cat": "serif"}, {"name": "Sitka Banner", "files": ["Sitka.ttc", "SitkaB.ttc", "SitkaI.ttc", "SitkaZ.ttc"], "cat": "serif"}, {"name": "Sitka Display", "files": ["Sitka.ttc", "SitkaB.ttc", "SitkaI.ttc", "SitkaZ.ttc"], "cat": "display"}, {"name": "Sitka Heading", "files": ["Sitka.ttc", "SitkaB.ttc", "SitkaI.ttc", "SitkaZ.ttc"], "cat": "serif"}, {"name": "Sitka Small", "files": ["Sitka.ttc", "SitkaB.ttc", "SitkaI.ttc", "SitkaZ.ttc"], "cat": "serif"}, {"name": "Sitka Subheading", "files": ["Sitka.ttc", "SitkaB.ttc", "SitkaI.ttc", "SitkaZ.ttc"], "cat": "serif"}, {"name": "Sitka Text", "files": ["Sitka.ttc", "SitkaB.ttc", "SitkaI.ttc", "SitkaZ.ttc"], "cat": "serif"}, {"name": "Snap ITC", "files": ["SNAP____.TTF", "SNAP___.TTF"], "cat": "display"}, {"name": "SoukouMincho", "files": ["\u88c5\u7532\u660e\u671dSoukouMincho-2.ttf"], "cat": "other"}, {"name": "Stencil", "files": ["STENCIL.TTF"], "cat": "display"}, {"name": "Stick", "files": ["Stick-Regular.ttf"], "cat": "other"}, {"name": "Sylfaen", "files": ["sylfaen.ttf"], "cat": "serif"}, {"name": "Tahoma", "files": ["tahoma.ttf", "tahomabd.ttf"], "cat": "sans"}, {"name": "Tempus Sans ITC", "files": ["TEMPSITC.TTF"], "cat": "sans"}, {"name": "Times New Roman", "files": ["times.ttf", "timesbd.ttf", "timesbi.ttf", "timesi.ttf"], "cat": "serif"}, {"name": "Trebuchet MS", "files": ["trebuc.ttf", "trebucbd.ttf", "trebucbi.ttf", "trebucit.ttf"], "cat": "sans"}, {"name": "Tw Cen MT", "files": ["TCB_____.TTF", "TCB____.TTF", "TCBI____.TTF", "TCBI___.TTF", "TCCB____.TTF", "TCCEB.TTF", "TCCM____.TTF", "TCM_____.TTF", "TCM____.TTF", "TCMI____.TTF", "TCMI___.TTF"], "cat": "sans"}, {"name": "Tw Cen MT Condensed", "files": ["TCCB____.TTF", "TCCB___.TTF", "TCCEB.TTF", "TCCM____.TTF", "TCCM___.TTF"], "cat": "sans"}, {"name": "Tw Cen MT Condensed Extra Bold", "files": ["TCCEB.TTF"], "cat": "sans"}, {"name": "Txt_IV25", "files": ["txt_IV25.ttf"], "cat": "other"}, {"name": "Txt_IV50", "files": ["txt_IV50.ttf"], "cat": "other"}, {"name": "Unispace", "files": ["unispace bd.ttf"], "cat": "other"}, {"name": "Verdana", "files": ["verdana.ttf", "verdanab.ttf", "verdanai.ttf", "verdanaz.ttf"], "cat": "sans"}, {"name": "Viner Hand ITC", "files": ["VINERITC.TTF"], "cat": "hand"}, {"name": "Vivaldi", "files": ["VIVALDII.TTF"], "cat": "display"}, {"name": "Vladimir Script", "files": ["VLADIMIR.TTF"], "cat": "hand"}, {"name": "Wide Latin", "files": ["LATINWD.TTF"], "cat": "display"}, {"name": "Yu Gothic", "files": ["YuGothB.ttc", "YuGothL.ttc", "YuGothM.ttc", "YuGothR.ttc"], "cat": "sans"}, {"name": "Yu Gothic Light", "files": ["YuGothL.ttc"], "cat": "sans"}, {"name": "Yu Gothic Medium", "files": ["YuGothM.ttc"], "cat": "sans"}, {"name": "Yu Gothic UI", "files": ["YuGothB.ttc", "YuGothM.ttc"], "cat": "sans"}, {"name": "Yu Gothic UI Light", "files": ["YuGothL.ttc"], "cat": "sans"}, {"name": "Yu Gothic UI Semibold", "files": ["YuGothB.ttc"], "cat": "sans"}, {"name": "Yu Gothic UI Semilight", "files": ["YuGothR.ttc"], "cat": "sans"}, {"name": "Zephyr", "files": ["Zephyr.otf"], "cat": "other"}];
+const CATS = [["sans", "\u65e0\u886c\u7ebf"], ["serif", "\u886c\u7ebf"], ["mono", "\u7b49\u5bbd"], ["hand", "\u624b\u5199"], ["display", "\u5c55\u793a"], ["other", "\u5176\u4ed6"]];
+const DEF_SAMPLE = "The quick brown fox jumps over the lazy dog 0123456789\n天地玄黄，宇宙洪荒。日月盈昃，辰宿列张。";
+
+const grid = document.getElementById('grid');
+const chipsEl = document.getElementById('chips');
+const emptyEl = document.getElementById('empty');
+const sampleInput = document.getElementById('sample');
+sampleInput.value = DEF_SAMPLE;
+
+const CAT_LABEL = {};
+CATS.forEach(c => CAT_LABEL[c.key] = c.label);
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function famCss(name){
+  return "'" + String(name).replace(/\\\\/g,'\\\\\\\\').replace(/'/g,"\\\\'") + "', sans-serif";
+}
+function splitRows(s){
+  const en = (s.match(/[A-Za-z]+[.,!?;:'’\-]*/g) || []).join(' ');
+  const num = (s.match(/\d+/g) || []).join(' ');
+  const zh = (s.match(/[\u3400-\u4dbf\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]+/g) || []).join('');
+  return [en, num, zh];
+}
+
+const state = {q:'', cat:'all', zh:false, size:32, weight:'400', italic:false};
+
+const cards = FONTS.map(f => {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.tabIndex = 0;
+  el.setAttribute('role','button');
+  el.dataset.name = (f.name + ' ' + (f.zh || '')).toLowerCase();
+  el.dataset.file = (f.files && f.files[0] ? f.files[0].toLowerCase() : '');
+  el.dataset.cat = f.cat;
+  el.dataset.zh = (f.zh || /[\u4e00-\u9fff]/.test(f.name)) ? '1' : '0';
+  el.innerHTML =
+    '<div class="preview"><div class="sample"><div class="row"></div><div class="row"></div><div class="row"></div></div></div>' +
+    '<div class="meta"><span class="names"><span class="name"></span><span class="en"></span></span><span class="tags">' +
+    '<span class="tag"></span><span class="tag file"></span></span></div>';
+  el.querySelector('.sample').style.fontFamily = famCss(f.name);
+  el.querySelector('.name').textContent = f.zh || f.name;
+  el.querySelector('.en').textContent = (f.zh && f.zh !== f.name) ? f.name : '';
+  el.querySelector('.tag').textContent = CAT_LABEL[f.cat] || '其他';
+  el.querySelector('.tag.file').textContent = f.files && f.files[0] ? f.files[0] : '—';
+  el.addEventListener('click', () => openModal(f));
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(f); }
+  });
+  grid.appendChild(el);
+  return {f, el};
+});
+
+function text(){ return sampleInput.value || DEF_SAMPLE; }
+function paint(){
+  const rows = splitRows(text()), fs = state.size + 'px', w = state.weight, it = state.italic;
+  for (const {el} of cards) {
+    const smp = el.querySelector('.sample');
+    for (let i = 0; i < 3; i++) {
+      const r = smp.children[i];
+      r.textContent = rows[i];
+      r.classList.toggle('empty', !rows[i]);
+      r.style.fontSize = fs;
+      r.style.fontWeight = w;
+      r.style.fontStyle = it ? 'italic' : 'normal';
+    }
+  }
+}
+function applyFilter(){
+  let vis = 0;
+  const q = state.q.trim().toLowerCase();
+  for (const {f, el} of cards) {
+    const hit = (!q || el.dataset.name.includes(q) || el.dataset.file.includes(q)) &&
+      (state.cat === 'all' || f.cat === state.cat) &&
+      (!state.zh || el.dataset.zh === '1');
+    el.classList.toggle('hide', !hit);
+    if (hit) vis++;
+  }
+  emptyEl.classList.toggle('show', vis === 0);
+}
+function renderChips(){
+  const counts = {};
+  cards.forEach(({f}) => counts[f.cat] = (counts[f.cat] || 0) + 1);
+  chipsEl.innerHTML = '';
+  const mk = (key, label) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (state.cat === key ? ' on' : '');
+    b.innerHTML = esc(label) + (key !== 'all' ? ' <span class="n">' + counts[key] + '</span>' : '');
+    b.addEventListener('click', () => { state.cat = key; renderChips(); applyFilter(); });
+    chipsEl.appendChild(b);
+  };
+  mk('all', '全部');
+  CATS.forEach(c => mk(c.key, c.label));
+  const zhCount = cards.filter(c => c.el.dataset.zh === '1').length;
+  document.getElementById('zhN').textContent = zhCount;
+  document.getElementById('zhBtn').classList.toggle('on', state.zh);
+}
+
+document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; applyFilter(); });
+sampleInput.addEventListener('input', paint);
+const sizeEl = document.getElementById('size');
+sizeEl.addEventListener('input', e => {
+  state.size = +e.target.value;
+  document.getElementById('sizeVal').textContent = e.target.value;
+  paint();
+});
+document.querySelectorAll('.seg button[data-w]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.seg button[data-w]').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  state.weight = b.dataset.w;
+  paint();
+}));
+document.getElementById('italicBtn').addEventListener('click', () => {
+  state.italic = !state.italic;
+  document.getElementById('italicBtn').classList.toggle('on', state.italic);
+  paint();
+});
+document.getElementById('zhBtn').addEventListener('click', () => {
+  state.zh = !state.zh;
+  document.getElementById('zhBtn').classList.toggle('on', state.zh);
+  applyFilter();
+});
+
+document.getElementById('sub').textContent = '共 ' + FONTS.length + ' 款字体 · 来自本机 Windows 字体目录';
+document.getElementById('total').textContent = FONTS.length;
+
+/* ---------- modal ---------- */
+const modal = document.getElementById('modal');
+function openModal(f){
+  const disp = f.zh || f.name;
+  document.getElementById('mName').innerHTML =
+    '<span style="font-family:' + famCss(f.name) + '">' + esc(disp) + '</span>' +
+    (disp !== f.name ? '<small>' + esc(f.name) + '</small>' : '') +
+    '<small>' + esc(CAT_LABEL[f.cat] || '其他') + '</small>';
+  const smp = document.getElementById('mSample');
+  smp.innerHTML = '<div class="row"></div><div class="row"></div><div class="row"></div>';
+  const rows = splitRows(text());
+  for (let i = 0; i < 3; i++) {
+    const r = smp.children[i];
+    r.textContent = rows[i];
+    r.classList.toggle('empty', !rows[i]);
+  }
+  smp.style.fontFamily = famCss(f.name);
+  smp.style.fontSize = Math.min(56, state.size * 1.7) + 'px';
+  smp.style.fontWeight = state.weight;
+  smp.style.fontStyle = state.italic ? 'italic' : 'normal';
+  let meta = '字体文件：<b>' + esc((f.files && f.files[0]) || '—') + '</b>';
+  if (disp !== f.name) meta += ' · 英文名：<b>' + esc(f.name) + '</b>';
+  meta += ' · 分类：<b>' + esc(CAT_LABEL[f.cat] || '其他') + '</b>';
+  document.getElementById('mMeta').innerHTML = meta;
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){ modal.classList.remove('show'); document.body.style.overflow = ''; }
+document.getElementById('mClose').addEventListener('click', closeModal);
+document.getElementById('mBackdrop').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+renderChips();
+paint();
+applyFilter();
+</script>
+</body>
+</html>
